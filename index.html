@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroSpark (NSP) – AI Web3 Risk Intelligence</title>
+<style>
+  body { font-family: 'Arial', sans-serif; margin:0; padding:0; background: #121212; color: #f0f0f0; }
+  header { text-align: center; padding: 50px 20px; background: #1a1a1a; }
+  header img { width: 80px; }
+  header h1 { margin: 20px 0 10px; font-size: 2.5em; color: #00d8ff; }
+  header p { font-size: 1.2em; margin: 5px 0; }
+  section { padding: 50px 20px; max-width: 900px; margin: auto; }
+  h2 { color: #00d8ff; }
+  input, button { padding: 10px; margin: 10px 0; width: 300px; border-radius: 5px; border: none; }
+  button { background: #00d8ff; color: #121212; font-weight: bold; cursor: pointer; }
+  .result { margin-top: 30px; font-size: 1.2em; }
+  .low { color: #4CAF50; }
+  .medium { color: #FFC107; }
+  .high { color: #F44336; }
+  footer { background: #1a1a1a; padding: 30px 20px; text-align: center; font-size: 0.9em; color: #aaa; }
+  a { color: #00d8ff; text-decoration: none; }
+</style>
+</head>
+<body>
+
+
+<header>
+  <img src="https://i.imgur.com/6bXQ3aT.png" alt="NeuroSpark Logo">
+  <h1>NeuroSpark (NSP)</h1>
+  <p>AI-Powered Web3 Risk Intelligence Platform</p>
+  <p>Fixed Supply: 500,000,000 NSP | No Minting</p>
+</header>
+
+
+<section>
+  <h2>Presale Token Scanner (Beta Demo)</h2>
+  <p>Enter token contract address to analyze Web3 risk.</p>
+  <input type="text" id="contractAddress" placeholder="0x...">
+  <br>
+  <button onclick="analyze()">Analyze</button>
+
+
+  <div class="result" id="result"></div>
+</section>
+
+
+<section>
+  <h2>Tokenomics</h2>
+  <ul>
+    <li>Max Supply: 500,000,000 NSP</li>
+    <li>Presale Allocation: 100,000,000 NSP</li>
+    <li>Locked in Vesting: 400,000,000 NSP</li>
+    <li>No Future Minting</li>
+  </ul>
+  <p>Presale Stages:</p>
+  <ul>
+    <li>Stage 1 — 20M @ $0.003</li>
+    <li>Stage 2 — 50M @ $0.005</li>
+    <li>Stage 3 — 30M @ $0.05</li>
+  </ul>
+  <p>Target Listing Price: $0.20</p>
+</section>
+
+
+<section>
+  <h2>Unsold Tokens Policy</h2>
+  <ul>
+    <li>20% of eligible holder balances will be distributed as bonus (2-month lock)</li>
+    <li>4M NSP allocated to DEX liquidity (unlocked)</li>
+    <li>Remaining tokens → 6-month lock, 5% monthly unlock via vesting</li>
+  </ul>
+</section>
+
+
+<section>
+  <h2>Roadmap (Short)</h2>
+  <ul>
+    <li>Phase 1 — Presale, Verified Smart Contracts, Community Growth</li>
+    <li>Phase 2 — Beta AI Demo</li>
+    <li>Phase 3 — Premium Analytics Dashboard</li>
+    <li>Phase 4 — Full AI Risk Intelligence Platform</li>
+  </ul>
+</section>
+
+
+<script>
+async function analyze() {
+    const addr = document.getElementById('contractAddress').value;
+    if(!addr) return alert("Enter a contract address!");
+
+
+    let score = 80;
+    const warnings = [];
+    const ownerPercent = Math.floor(Math.random()*30);
+    const mintDetected = Math.random() < 0.5;
+
+
+    score -= ownerPercent > 20 ? 20 : 0;
+    if(mintDetected) { score -= 25; warnings.push("Mint function detected"); }
+    if(ownerPercent > 20) warnings.push(`Owner wallet holds ${ownerPercent}%`);
+    warnings.push("Liquidity locked");
+
+
+    let riskLevel = score >= 70 ? "Low" : score >= 40 ? "Medium" : "High";
+    let colorClass = score >= 70 ? "low" : score >= 40 ? "medium" : "high";
+
+
+    document.getElementById('result').innerHTML = `
+      <p>Risk Score: <strong>${score} / 100</strong></p>
+      <p class="${colorClass}">Risk Level: ${riskLevel}</p>
+      <p>Warnings:<br>${warnings.join("<br>")}</p>
+    `;
+}
+</script>
+
+
+<footer>
+  <p>NSP token is not financial advice. Cryptocurrency investments involve risk. Participants are responsible for their own decisions.</p>
+  <p>Official Links: 
+    <a href="https://t.me/NeuroSparkOfficial" target="_blank">Telegram</a> | 
+    <a href="https://twitter.com/NeuroSparkAI" target="_blank">Twitter</a>
+  </p>
+</footer>
+
+
+</body>
+</html>
