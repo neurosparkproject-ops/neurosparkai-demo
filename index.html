@@ -18,20 +18,17 @@ body {
 }
 
 
-/* Container */
 .container {
     text-align: center;
     width: 400px;
 }
 
 
-/* Title */
 h1 {
     color: #00ffc3;
 }
 
 
-/* Card */
 .card {
     background: rgba(255,255,255,0.05);
     backdrop-filter: blur(10px);
@@ -42,7 +39,6 @@ h1 {
 }
 
 
-/* Input */
 input {
     width: 100%;
     padding: 12px;
@@ -52,7 +48,6 @@ input {
 }
 
 
-/* Button */
 button {
     margin-top: 15px;
     padding: 12px 20px;
@@ -72,7 +67,6 @@ button:hover {
 }
 
 
-/* Risk colors */
 .low { color: #00ff88; }
 .medium { color: #ffcc00; }
 .high { color: #ff4d4d; }
@@ -110,20 +104,6 @@ button:hover {
     </div>
 
 
-    <div class="card" id="analysis" style="display:none;">
-        <h3>AI Deep Analysis</h3>
-
-
-        <p>✔ Smart Contract Audit Score: 82/100</p>
-        <p>✔ Honeypot Risk: Low ✅</p>
-        <p>✔ Liquidity Stability: Strong 💧</p>
-        <p>✔ Whale Manipulation Risk: Medium ⚠️</p>
-
-
-        <p><b>Confidence Level: High</b></p>
-    </div>
-
-
 </div>
 
 
@@ -140,48 +120,80 @@ async function analyze() {
     }
 
 
-    // Loading
+    // Loading effect
     document.getElementById("result").style.display = "block";
-    document.getElementById("analysis").style.display = "block";
-    document.getElementById("score").innerHTML = "Analyzing...";
+    document.getElementById("score").innerHTML = "Analyzing blockchain data...";
     document.getElementById("warnings").innerHTML = "";
     document.getElementById("verdict").innerHTML = "";
 
 
     try {
+
+
         const res = await fetch(`https://api.gopluslabs.io/api/v1/token_security/1?contract_addresses=${contract}`);
         const data = await res.json();
 
 
+        if (!data.result) {
+            document.getElementById("score").innerHTML = "API error";
+            return;
+        }
+
+
         const token = data.result[Object.keys(data.result)[0]];
+
+
+        if (!token) {
+            document.getElementById("score").innerHTML = "Token not found";
+            return;
+        }
 
 
         let score = 100;
         let warningsList = [];
 
 
-        // 🔴 Honeypot kontrol
+        // 🔍 Risk checks
         if (token.is_honeypot === "1") {
             score -= 50;
             warningsList.push("Honeypot detected");
         }
 
 
-        // 🔴 Owner kontrol
         if (token.owner_percentage && parseFloat(token.owner_percentage) > 10) {
             score -= 20;
             warningsList.push("High owner control");
         }
 
 
-        // 🔴 Liquidity
         if (token.is_in_dex !== "1") {
             score -= 20;
-            warningsList.push("No liquidity");
+            warningsList.push("Low liquidity");
         }
 
 
-        // Risk belirleme
+        if (token.is_open_source !== "1") {
+            score -= 10;
+            warningsList.push("Contract not open source");
+        }
+
+
+        if (token.is_proxy === "1") {
+            score -= 10;
+            warningsList.push("Proxy contract detected");
+        }
+
+
+        if (token.can_take_back_ownership === "1") {
+            score -= 15;
+            warningsList.push("Ownership can be reclaimed");
+        }
+
+
+        if (score < 0) score = 0;
+
+
+        // Risk level
         let riskText = "";
         let riskClass = "";
 
@@ -198,6 +210,7 @@ async function analyze() {
         }
 
 
+        // UI update
         document.getElementById("score").innerHTML = "AI Risk Score: " + score + " / 100";
 
 
@@ -217,10 +230,10 @@ async function analyze() {
 
         document.getElementById("verdict").innerHTML =
             score > 80
-            ? "Low risk detected. Suitable for further evaluation."
+            ? "AI analysis indicates low contract risk. No critical vulnerabilities detected."
             : score > 50
-            ? "Moderate risk. Be cautious."
-            : "High risk. Avoid.";
+            ? "Moderate risk detected. Some caution is advised."
+            : "High risk detected. Avoid interaction.";
 
 
     } catch (err) {
@@ -228,6 +241,7 @@ async function analyze() {
     }
 }
 </script>
+
 
 </body>
 </html>
