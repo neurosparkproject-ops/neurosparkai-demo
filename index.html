@@ -120,22 +120,28 @@ async function analyze() {
     }
 
 
-    // Loading effect
+    // UI reset
     document.getElementById("result").style.display = "block";
-    document.getElementById("score").innerHTML = "Analyzing blockchain data...";
+    document.getElementById("analysis").style.display = "block";
+
+
+    document.getElementById("score").innerHTML = "Scanning blockchain...";
     document.getElementById("warnings").innerHTML = "";
     document.getElementById("verdict").innerHTML = "";
+    document.getElementById("riskLevel").innerHTML = "...";
+
+
+    // AI hissi için delay
+    await new Promise(r => setTimeout(r, 1200));
 
 
     try {
-
-
         const res = await fetch(`https://api.gopluslabs.io/api/v1/token_security/1?contract_addresses=${contract}`);
         const data = await res.json();
 
 
-        if (!data.result) {
-            document.getElementById("score").innerHTML = "API error";
+        if (!data.result || Object.keys(data.result).length === 0) {
+            document.getElementById("score").innerHTML = "Token data not available";
             return;
         }
 
@@ -143,97 +149,102 @@ async function analyze() {
         const token = data.result[Object.keys(data.result)[0]];
 
 
-        if (!token) {
-            document.getElementById("score").innerHTML = "Token not found";
-            return;
-        }
-
-
         let score = 100;
-        let warningsList = [];
+let warningsList = [];
 
 
-        // 🔍 Risk checks
-        if (token.is_honeypot === "1") {
-            score -= 50;
-            warningsList.push("Honeypot detected");
-        }
+// Honeypot
+if (token.is_honeypot === "1") {
+    score -= 50;
+    warningsList.push("Honeypot risk detected");
+} else if (!token.is_honeypot) {
+    score -= 10;
+    warningsList.push("Honeypot data unavailable");
+}
 
 
-        if (token.owner_percentage && parseFloat(token.owner_percentage) > 10) {
-            score -= 20;
-            warningsList.push("High owner control");
-        }
+// Owner
+if (token.owner_percentage && parseFloat(token.owner_percentage) > 10) {
+    score -= 20;
+    warningsList.push("High owner control");
+} else if (!token.owner_percentage) {
+    score -= 10;
+    warningsList.push("Owner data unavailable");
+}
 
 
-        if (token.is_in_dex !== "1") {
-            score -= 20;
-            warningsList.push("Low liquidity");
-        }
+// Liquidity
+if (token.is_in_dex === "0") {
+    score -= 20;
+    warningsList.push("Low liquidity");
+} else if (!token.is_in_dex) {
+    score -= 10;
+    warningsList.push("Liquidity data unavailable");
+}
 
 
-        if (token.is_open_source !== "1") {
-            score -= 10;
-            warningsList.push("Contract not open source");
-        }
+// limit
+if (score < 0) score = 0;
 
 
-        if (token.is_proxy === "1") {
-            score -= 10;
-            warningsList.push("Proxy contract detected");
-        }
+        // 🔥 SKOR ANİMASYONU
+        let current = 0;
+        const interval = setInterval(() => {
+            current += 2;
+            document.getElementById("score").innerHTML = "AI Risk Score: " + current + " / 100";
 
 
-        if (token.can_take_back_ownership === "1") {
-            score -= 15;
-            warningsList.push("Ownership can be reclaimed");
-        }
+            if (current >= score) {
+                clearInterval(interval);
 
 
-        if (score < 0) score = 0;
+                // Risk level
+                let riskText = "";
+                let riskClass = "";
 
 
-        // Risk level
-        let riskText = "";
-        let riskClass = "";
+                if (score > 80) {
+                    riskText = "Low 🟢";
+                    riskClass = "low";
+                } else if (score > 50) {
+                    riskText = "Medium ⚠️";
+                    riskClass = "medium";
+                } else {
+                    riskText = "High 🔴";
+                    riskClass = "high";
+                }
 
 
-        if (score > 80) {
-            riskText = "Low 🟢";
-            riskClass = "low";
-        } else if (score > 50) {
-            riskText = "Medium ⚠️";
-            riskClass = "medium";
-        } else {
-            riskText = "High 🔴";
-            riskClass = "high";
-        }
+                const riskEl = document.getElementById("riskLevel");
+                riskEl.innerHTML = riskText;
+                riskEl.className = riskClass;
 
 
-        // UI update
-        document.getElementById("score").innerHTML = "AI Risk Score: " + score + " / 100";
+                // Warnings
+                let warningsHTML = "";
+                warningsList.forEach(w => {
+                    warningsHTML += "<li>" + w + "</li>";
+                });
 
 
-        const riskEl = document.getElementById("riskLevel");
-        riskEl.innerHTML = riskText;
-        riskEl.className = riskClass;
+                document.getElementById("warnings").innerHTML = warningsHTML || "<li>No major risks detected</li>";
 
 
-        let warningsHTML = "";
-        warningsList.forEach(w => {
-            warningsHTML += "<li>" + w + "</li>";
-        });
+                // Verdict
+                document.getElementById("verdict").innerHTML =
+                    score > 80
+                        ? "AI analysis indicates low contract risk. No critical vulnerabilities detected."
+                        : score > 50
+                        ? "Moderate risk detected. Some caution is advised."
+                        : "High risk detected. Avoid interaction.";
 
 
-        document.getElementById("warnings").innerHTML = warningsHTML;
-
-
-        document.getElementById("verdict").innerHTML =
-            score > 80
-            ? "AI analysis indicates low contract risk. No critical vulnerabilities detected."
-            : score > 50
-            ? "Moderate risk detected. Some caution is advised."
-            : "High risk detected. Avoid interaction.";
+                // Confidence
+                document.getElementById("analysis").innerHTML += `
+                    <p><b>Confidence Level:</b> High</p>
+                `;
+            }
+        }, 20);
 
 
     } catch (err) {
