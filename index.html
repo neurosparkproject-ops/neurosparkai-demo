@@ -124,7 +124,7 @@ async function analyze() {
 
         const res = await fetch(`/api/scan?contract=${contract}`);
         const data = await res.json();
-
+        console.log(data);
 
         if (!data.result || Object.keys(data.result).length === 0) {
             document.getElementById("score").innerHTML = "Token not found";
