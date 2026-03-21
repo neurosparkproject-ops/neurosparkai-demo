@@ -128,64 +128,106 @@ button:hover {
 
 
 <script>
-function analyze() {
+async function analyze() {
 
 
-    let score = Math.floor(Math.random() * 100);
+    const contract = document.getElementById("contract").value;
 
 
-    let riskText = document.getElementById("riskLevel");
-    let scoreText = document.getElementById("score");
-    let warnings = document.getElementById("warnings");
-    let verdict = document.getElementById("verdict");
-
-
-    scoreText.innerHTML = "AI Risk Score: " + score + " / 100";
-
-
-    warnings.innerHTML = "";
-
-
-    if (score > 80) {
-        riskText.innerHTML = "Low 🟢";
-        riskText.className = "low";
-
-
-        warnings.innerHTML += "<li>Owner wallet holds 4%</li>";
-        warnings.innerHTML += "<li>Liquidity locked</li>";
-
-
-        verdict.innerHTML = "Low risk detected. Suitable for further evaluation.";
-    }
-    else if (score > 50) {
-        riskText.innerHTML = "Medium ⚠️";
-        riskText.className = "medium";
-
-
-        warnings.innerHTML += "<li>Owner wallet holds 18%</li>";
-        warnings.innerHTML += "<li>Liquidity partially locked</li>";
-
-
-        verdict.innerHTML = "Moderate risk detected. Proceed with caution.";
-    }
-    else {
-        riskText.innerHTML = "High 🔴";
-        riskText.className = "high";
-
-
-        warnings.innerHTML += "<li>High whale concentration</li>";
-        warnings.innerHTML += "<li>Liquidity not locked</li>";
-
-
-        verdict.innerHTML = "High risk detected. Not recommended.";
+    if (!contract) {
+        alert("Enter contract address");
+        return;
     }
 
 
+    // Loading
     document.getElementById("result").style.display = "block";
     document.getElementById("analysis").style.display = "block";
+    document.getElementById("score").innerHTML = "Analyzing...";
+    document.getElementById("warnings").innerHTML = "";
+    document.getElementById("verdict").innerHTML = "";
+
+
+    try {
+        const res = await fetch(`https://api.gopluslabs.io/api/v1/token_security/1?contract_addresses=${contract}`);
+        const data = await res.json();
+
+
+        const token = data.result[Object.keys(data.result)[0]];
+
+
+        let score = 100;
+        let warningsList = [];
+
+
+        // 🔴 Honeypot kontrol
+        if (token.is_honeypot === "1") {
+            score -= 50;
+            warningsList.push("Honeypot detected");
+        }
+
+
+        // 🔴 Owner kontrol
+        if (token.owner_percentage && parseFloat(token.owner_percentage) > 10) {
+            score -= 20;
+            warningsList.push("High owner control");
+        }
+
+
+        // 🔴 Liquidity
+        if (token.is_in_dex !== "1") {
+            score -= 20;
+            warningsList.push("No liquidity");
+        }
+
+
+        // Risk belirleme
+        let riskText = "";
+        let riskClass = "";
+
+
+        if (score > 80) {
+            riskText = "Low 🟢";
+            riskClass = "low";
+        } else if (score > 50) {
+            riskText = "Medium ⚠️";
+            riskClass = "medium";
+        } else {
+            riskText = "High 🔴";
+            riskClass = "high";
+        }
+
+
+        document.getElementById("score").innerHTML = "AI Risk Score: " + score + " / 100";
+
+
+        const riskEl = document.getElementById("riskLevel");
+        riskEl.innerHTML = riskText;
+        riskEl.className = riskClass;
+
+
+        let warningsHTML = "";
+        warningsList.forEach(w => {
+            warningsHTML += "<li>" + w + "</li>";
+        });
+
+
+        document.getElementById("warnings").innerHTML = warningsHTML;
+
+
+        document.getElementById("verdict").innerHTML =
+            score > 80
+            ? "Low risk detected. Suitable for further evaluation."
+            : score > 50
+            ? "Moderate risk. Be cautious."
+            : "High risk. Avoid.";
+
+
+    } catch (err) {
+        document.getElementById("score").innerHTML = "Error fetching data";
+    }
 }
 </script>
-
 
 </body>
 </html>
