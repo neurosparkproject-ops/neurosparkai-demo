@@ -2,81 +2,80 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NeuroSpark AI Scanner</title>
+<title>NeuroSpark AI</title>
 
 
 <style>
 body {
-  background: #0d1117;
-  color: white;
-  font-family: Arial;
-  text-align: center;
-  padding: 40px;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0f172a, #020617);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 
+/* Container */
+.container {
+    text-align: center;
+    width: 400px;
+}
+
+
+/* Title */
 h1 {
-  color: #00ffc3;
+    color: #00ffc3;
 }
 
 
-input {
-  width: 320px;
-  padding: 12px;
-  border-radius: 8px;
-  border: none;
-  margin-top: 20px;
-}
-
-
-button {
-  margin-top: 15px;
-  padding: 12px 25px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #00ffc3, #00c3ff);
-  color: black;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-
+/* Card */
 .card {
-  margin-top: 25px;
-  padding: 20px;
-  border-radius: 12px;
-  background: #161b22;
-  width: 350px;
-  margin-left: auto;
-  margin-right: auto;
-  display: none;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 0 20px rgba(0,255,200,0.1);
 }
 
 
-#loading {
-  margin-top: 20px;
-  font-size: 14px;
-  color: #aaa;
+/* Input */
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    margin-top: 10px;
 }
 
 
-.progress {
-  width: 300px;
-  height: 8px;
-  background: #222;
-  border-radius: 5px;
-  margin: 10px auto;
-  overflow: hidden;
+/* Button */
+button {
+    margin-top: 15px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #00ffc3, #00aaff);
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
 
-.bar {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #00ffc3, #00c3ff);
-  transition: width 0.4s;
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #00ffc3;
 }
+
+
+/* Risk colors */
+.low { color: #00ff88; }
+.medium { color: #ffcc00; }
+.high { color: #ff4d4d; }
 </style>
 </head>
 
@@ -84,101 +83,106 @@ button {
 <body>
 
 
-<h1>NeuroSpark (NSP)</h1>
-<p>AI-Powered Web3 Risk Intelligence Platform</p>
+<div class="container">
 
 
-<h2>Presale Token Scanner (Beta)</h2>
+    <h1>NeuroSpark (NSP)</h1>
+    <p>AI Risk Analysis Engine</p>
 
 
-<input type="text" id="contract" placeholder="Enter contract address..."><br>
-<button onclick="analyze()">Analyze</button>
+    <div class="card">
+        <input id="contract" placeholder="Enter contract address...">
+        <button onclick="analyze()">Run AI Scan</button>
+    </div>
 
 
-<div id="loading" style="display:none;">
-  <p id="loadingText">Starting scan...</p>
-  <div class="progress">
-    <div class="bar" id="bar"></div>
-  </div>
-</div>
+    <div class="card" id="result" style="display:none;">
+        <h3 id="score"></h3>
+        <p>Risk Level: <span id="riskLevel"></span></p>
 
 
-<div class="card" id="result">
-  <h3 id="score">Risk Score: 60 / 100</h3>
-  <p id="level" style="color:orange;">Risk Level: Medium</p>
+        <p><b>Key Risk Factors:</b></p>
+        <ul id="warnings"></ul>
 
 
-  <p>Warnings:</p>
-  <p id="warnings"></p>
-</div>
+        <p><b>AI Verdict:</b></p>
+        <p id="verdict"></p>
+    </div>
 
 
-<div class="card" id="advanced">
-  <h3 style="color:#00ffc3;">AI Deep Analysis</h3>
-  <p>✔ Smart Contract Audit Score: 82/100</p>
-  <p>✔ Honeypot Risk: Low</p>
-  <p>✔ Liquidity Stability: Strong</p>
-  <p>✔ Whale Manipulation Risk: Medium</p>
+    <div class="card" id="analysis" style="display:none;">
+        <h3>AI Deep Analysis</h3>
+
+
+        <p>✔ Smart Contract Audit Score: 82/100</p>
+        <p>✔ Honeypot Risk: Low ✅</p>
+        <p>✔ Liquidity Stability: Strong 💧</p>
+        <p>✔ Whale Manipulation Risk: Medium ⚠️</p>
+
+
+        <p><b>Confidence Level: High</b></p>
+    </div>
+
+
 </div>
 
 
 <script>
 function analyze() {
-  const loading = document.getElementById("loading");
-  const text = document.getElementById("loadingText");
-  const bar = document.getElementById("bar");
 
 
-  const result = document.getElementById("result");
-  const advanced = document.getElementById("advanced");
+    let score = Math.floor(Math.random() * 100);
 
 
-  loading.style.display = "block";
-  result.style.display = "none";
-  advanced.style.display = "none";
+    let riskText = document.getElementById("riskLevel");
+    let scoreText = document.getElementById("score");
+    let warnings = document.getElementById("warnings");
+    let verdict = document.getElementById("verdict");
 
 
-  let steps = [
-    { text: "🔍 Scanning smart contract...", progress: 25 },
-    { text: "⚡ Checking liquidity pools...", progress: 50 },
-    { text: "🧠 Running AI risk model...", progress: 75 },
-    { text: "📊 Finalizing analysis...", progress: 100 }
-  ];
+    scoreText.innerHTML = "AI Risk Score: " + score + " / 100";
 
 
-  let i = 0;
+    warnings.innerHTML = "";
 
 
-  const interval = setInterval(() => {
-    text.innerText = steps[i].text;
-    bar.style.width = steps[i].progress + "%";
-    i++;
+    if (score > 80) {
+        riskText.innerHTML = "Low 🟢";
+        riskText.className = "low";
 
 
-    if (i >= steps.length) {
-      clearInterval(interval);
+        warnings.innerHTML += "<li>Owner wallet holds 4%</li>";
+        warnings.innerHTML += "<li>Liquidity locked</li>";
 
 
-      loading.style.display = "none";
-
-
-      // random data (daha gerçekçi)
-      let score = Math.floor(Math.random() * 40) + 60;
-      let level = score > 75 ? "Low" : score > 50 ? "Medium" : "High";
-
-
-      document.getElementById("score").innerText = "Risk Score: " + score + " / 100";
-      document.getElementById("level").innerText = "Risk Level: " + level;
-
-
-      document.getElementById("warnings").innerHTML =
-        "• Owner wallet holds " + Math.floor(Math.random()*30) + "%<br>• Liquidity locked";
-
-
-      result.style.display = "block";
-      advanced.style.display = "block";
+        verdict.innerHTML = "Low risk detected. Suitable for further evaluation.";
     }
-  }, 700);
+    else if (score > 50) {
+        riskText.innerHTML = "Medium ⚠️";
+        riskText.className = "medium";
+
+
+        warnings.innerHTML += "<li>Owner wallet holds 18%</li>";
+        warnings.innerHTML += "<li>Liquidity partially locked</li>";
+
+
+        verdict.innerHTML = "Moderate risk detected. Proceed with caution.";
+    }
+    else {
+        riskText.innerHTML = "High 🔴";
+        riskText.className = "high";
+
+
+        warnings.innerHTML += "<li>High whale concentration</li>";
+        warnings.innerHTML += "<li>Liquidity not locked</li>";
+
+
+        verdict.innerHTML = "High risk detected. Not recommended.";
+    }
+
+
+    document.getElementById("result").style.display = "block";
+    document.getElementById("analysis").style.display = "block";
 }
 </script>
 
