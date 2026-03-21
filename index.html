@@ -122,7 +122,7 @@ async function analyze() {
     try {
 
 
-        const res = await fetch(`https://api.allorigins.win/raw?url=https://api.gopluslabs.io/api/v1/token_security/1?contract_addresses=${contract}`);
+        const res = await fetch(`https://corsproxy.io/?https://api.gopluslabs.io/api/v1/token_security/1?contract_addresses=${contract}`);
         const data = await res.json();
 
 
