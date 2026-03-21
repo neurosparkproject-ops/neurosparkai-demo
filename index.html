@@ -57,13 +57,6 @@ button {
     color: black;
     font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
-}
-
-
-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px #00ffc3;
 }
 
 
@@ -111,7 +104,7 @@ button:hover {
 async function analyze() {
 
 
-    const contract = document.getElementById("contract").value;
+    let contract = document.getElementById("contract").value;
 
 
     if (!contract) {
@@ -120,28 +113,21 @@ async function analyze() {
     }
 
 
-    // UI reset
     document.getElementById("result").style.display = "block";
-    document.getElementById("analysis").style.display = "block";
-
-
-    document.getElementById("score").innerHTML = "Scanning blockchain...";
+    document.getElementById("score").innerHTML = "Analyzing...";
     document.getElementById("warnings").innerHTML = "";
     document.getElementById("verdict").innerHTML = "";
-    document.getElementById("riskLevel").innerHTML = "...";
-
-
-    // AI hissi için delay
-    await new Promise(r => setTimeout(r, 1200));
 
 
     try {
+
+
         const res = await fetch(`https://api.gopluslabs.io/api/v1/token_security/1?contract_addresses=${contract}`);
         const data = await res.json();
 
 
         if (!data.result || Object.keys(data.result).length === 0) {
-            document.getElementById("score").innerHTML = "Token data not available";
+            document.getElementById("score").innerHTML = "Token not found";
             return;
         }
 
@@ -150,105 +136,72 @@ async function analyze() {
 
 
         let score = 100;
-let warningsList = [];
+        let warnings = [];
 
 
-// Honeypot
-if (token.is_honeypot === "1") {
-    score -= 50;
-    warningsList.push("Honeypot risk detected");
-} else if (!token.is_honeypot) {
-    score -= 10;
-    warningsList.push("Honeypot data unavailable");
-}
+        // Honeypot
+        if (token.is_honeypot === "1") {
+            score -= 50;
+            warnings.push("Honeypot risk detected");
+        }
 
 
-// Owner
-if (token.owner_percentage && parseFloat(token.owner_percentage) > 10) {
-    score -= 20;
-    warningsList.push("High owner control");
-} else if (!token.owner_percentage) {
-    score -= 10;
-    warningsList.push("Owner data unavailable");
-}
+        // Owner risk
+        if (token.owner_percent && parseFloat(token.owner_percent) > 10) {
+            score -= 20;
+            warnings.push("High owner control");
+        }
 
 
-// Liquidity
-if (token.is_in_dex === "0") {
-    score -= 20;
-    warningsList.push("Low liquidity");
-} else if (!token.is_in_dex) {
-    score -= 10;
-    warningsList.push("Liquidity data unavailable");
-}
+        // Liquidity
+        if (token.is_in_dex !== "1") {
+            score -= 20;
+            warnings.push("Low liquidity");
+        }
 
 
-// limit
-if (score < 0) score = 0;
+        // Risk Level
+        let riskText = "";
+        let riskClass = "";
 
 
-        // 🔥 SKOR ANİMASYONU
-        let current = 0;
-        const interval = setInterval(() => {
-            current += 2;
-            document.getElementById("score").innerHTML = "AI Risk Score: " + current + " / 100";
+        if (score > 80) {
+            riskText = "Low 🟢";
+            riskClass = "low";
+        } else if (score > 50) {
+            riskText = "Medium ⚠️";
+            riskClass = "medium";
+        } else {
+            riskText = "High 🔴";
+            riskClass = "high";
+        }
 
 
-            if (current >= score) {
-                clearInterval(interval);
+        // UI update
+        document.getElementById("score").innerHTML = "AI Risk Score: " + score + " / 100";
 
 
-                // Risk level
-                let riskText = "";
-                let riskClass = "";
+        let warningsHTML = "";
+        warnings.forEach(w => {
+            warningsHTML += "<li>" + w + "</li>";
+        });
 
 
-                if (score > 80) {
-                    riskText = "Low 🟢";
-                    riskClass = "low";
-                } else if (score > 50) {
-                    riskText = "Medium ⚠️";
-                    riskClass = "medium";
-                } else {
-                    riskText = "High 🔴";
-                    riskClass = "high";
-                }
+        document.getElementById("warnings").innerHTML = warningsHTML;
+        document.getElementById("riskLevel").innerHTML = riskText;
+        document.getElementById("riskLevel").className = riskClass;
 
 
-                const riskEl = document.getElementById("riskLevel");
-                riskEl.innerHTML = riskText;
-                riskEl.className = riskClass;
-
-
-                // Warnings
-                let warningsHTML = "";
-                warningsList.forEach(w => {
-                    warningsHTML += "<li>" + w + "</li>";
-                });
-
-
-                document.getElementById("warnings").innerHTML = warningsHTML || "<li>No major risks detected</li>";
-
-
-                // Verdict
-                document.getElementById("verdict").innerHTML =
-                    score > 80
-                        ? "AI analysis indicates low contract risk. No critical vulnerabilities detected."
-                        : score > 50
-                        ? "Moderate risk detected. Some caution is advised."
-                        : "High risk detected. Avoid interaction.";
-
-
-                // Confidence
-                document.getElementById("analysis").innerHTML += `
-                    <p><b>Confidence Level:</b> High</p>
-                `;
-            }
-        }, 20);
+        document.getElementById("verdict").innerHTML =
+            score > 80
+            ? "Low risk detected. Suitable for further evaluation."
+            : score > 50
+            ? "Moderate risk detected. Proceed with caution."
+            : "High risk detected. Avoid interaction.";
 
 
     } catch (err) {
-        document.getElementById("score").innerHTML = "Error fetching data";
+        document.getElementById("score").innerHTML = "API error";
     }
 }
 </script>
