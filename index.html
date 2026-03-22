@@ -134,6 +134,9 @@ async function analyze() {
 const token = data.result?.
 [contract.toLowerCase()];
 
+console.log("DATA:", data);
+console.log("TOKEN:", token);
+
 if (!token) {
 
 document.getElementById("score").innerHTML 
