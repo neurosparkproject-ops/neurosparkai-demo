@@ -1,89 +1,114 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>NeuroSpark AI</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+<meta charset="UTF-8">
+<title>NeuroSpark AI</title>
 
 
-    .container {
-      text-align: center;
-      background: rgba(255,255,255,0.05);
-      padding: 30px;
-      border-radius: 15px;
-      width: 400px;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
 
 
-    input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      margin-bottom: 15px;
-    }
+.container {
+  text-align: center;
+  background: rgba(255,255,255,0.05);
+  padding: 30px;
+  border-radius: 15px;
+  width: 400px;
+}
 
 
-    button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      background: #22c55e;
-      color: white;
-      cursor: pointer;
-    }
+input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 10px;
+}
 
 
-    .result {
-      margin-top: 20px;
-      background: rgba(255,255,255,0.05);
-      padding: 15px;
-      border-radius: 10px;
-    }
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #22c55e;
+  color: white;
+  cursor: pointer;
+}
 
 
-    .low { color: #22c55e; }
-    .medium { color: orange; }
-    .high { color: red; }
-  </style>
+.result {
+  margin-top: 20px;
+  background: rgba(255,255,255,0.05);
+  padding: 15px;
+  border-radius: 10px;
+}
+
+
+.low { color: #22c55e; }
+.medium { color: orange; }
+.high { color: red; }
+</style>
 </head>
 
 
 <body>
-  <div class="container">
-    <h2>NeuroSpark (NSP)</h2>
-    <p>AI Risk Analysis Engine</p>
 
 
-    <input type="text" id="contract" placeholder="Enter contract address">
+<div class="container">
 
 
-    <button onclick="runScan()">Run AI Scan</button>
+  <h2>NeuroSpark (NSP)</h2>
+  <p>AI Risk Analysis Engine</p>
 
 
-    <div class="result">
-      <h3 id="score">AI Risk Score: -</h3>
-      <p id="riskLevel">Risk Level: -</p>
-      <p><b>Key Risk Factors:</b></p>
-      <p id="warnings">-</p>
-      <p><b>AI Verdict:</b></p>
-      <p id="verdict">-</p>
-    </div>
+  <!-- 🔥 YENİ EKLENENLER -->
+  <p style="color:#00ffcc; font-size:14px;">
+    Don’t trade blind. Analyze risk before you invest.
+  </p>
+
+
+  <p style="color:gray; font-size:12px;">
+    Demo version — using simulated data
+  </p>
+
+
+  <input type="text" id="contract" placeholder="Enter contract address">
+
+
+  <button onclick="runScan()">Analyze Contract</button>
+
+
+  <div class="result">
+    <h3 id="score">Risk Score: -</h3>
+    <p id="riskLevel">Risk Level: -</p>
+
+
+    <p><b>Key Risk Factors:</b></p>
+    <p id="warnings">-</p>
+
+
+    <p><b>AI Verdict:</b></p>
+    <p id="verdict">-</p>
   </div>
+
+
+</div>
 
 
 <script>
 function runScan() {
+
+
   let score = Math.floor(Math.random() * 60) + 40;
 
 
@@ -112,7 +137,10 @@ function runScan() {
   }
 
 
-  document.getElementById("score").innerHTML = "AI Risk Score: " + score + " / 100";
+  document.getElementById("score").innerHTML =
+    "Risk Score: " + score + " / 100 🔶";
+
+
   document.getElementById("riskLevel").innerHTML =
     "Risk Level: <span class='" + riskClass + "'>" + riskText + "</span>";
 
@@ -123,10 +151,10 @@ function runScan() {
 
   document.getElementById("verdict").innerHTML =
     score > 70
-      ? "Low risk detected. Suitable for further evaluation."
+      ? "✅ Low risk — safer to explore."
       : score > 40
-      ? "Moderate risk. Be cautious."
-      : "High risk. Avoid.";
+      ? "⚠️ Moderate risk — be cautious."
+      : "❌ High risk — avoid this contract.";
 }
 </script>
 
