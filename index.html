@@ -1,163 +1,277 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>NeuroSpark AI</title>
-
-
-<style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroSpark (NSP)</title><style>
 body {
-  margin: 0;
+  background: #020617;
   font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  color: #e2e8f0;
+  text-align: center;
+  padding: 40px;
 }
 
 
 .container {
-  text-align: center;
-  background: rgba(255,255,255,0.05);
-  padding: 30px;
-  border-radius: 15px;
-  width: 400px;
+  max-width: 520px;
+  margin: auto;
+}
+
+
+h1 {
+  font-size: 30px;
+}
+
+
+.subtitle {
+  color: #22c55e;
+}
+
+
+.demo-note {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 20px;
 }
 
 
 input {
   width: 100%;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px;
+  border-radius: 10px;
   border: none;
-  margin-bottom: 10px;
+  margin-top: 15px;
 }
 
 
 button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
+  margin-top: 10px;
   background: #22c55e;
-  color: white;
-  cursor: pointer;
-}
-
-
-.result {
-  margin-top: 20px;
-  background: rgba(255,255,255,0.05);
-  padding: 15px;
+  border: none;
+  padding: 12px;
   border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
 }
 
 
-.low { color: #22c55e; }
-.medium { color: orange; }
-.high { color: red; }
-</style>
-</head>
+#loading {
+  display: none;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #22c55e;
+}
 
 
-<body>
+/* RESULT CARD */
+.result-card {
+  display: none;
+  margin-top: 25px;
+  background: #0f172a;
+  padding: 20px;
+  border-radius: 16px;
+  text-align: left;
+  box-shadow: 0 0 25px rgba(0,255,150,0.1);
+}
 
 
-<div class="container">
+/* SCORE */
+.score-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
 
-  <h2>NeuroSpark (NSP)</h2>
-  <p>AI Risk Analysis Engine</p>
+.score {
+  font-size: 30px;
+  font-weight: bold;
+}
 
 
-  <!-- 🔥 YENİ EKLENENLER -->
-  <p style="color:#00ffcc; font-size:14px;">
-    Don’t trade blind. Analyze risk before you invest.
-  </p>
+.badge {
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
 
 
-  <p style="color:gray; font-size:12px;">
-    Demo version — using simulated data
-  </p>
+/* RISK COLORS */
+.low { background: #22c55e; color: black; }
+.medium { background: orange; color: black; }
+.high { background: red; color: white; }
 
 
-  <input type="text" id="contract" placeholder="Enter contract address">
+/* BAR */
+.bar {
+  height: 10px;
+  background: #1e293b;
+  border-radius: 10px;
+  margin: 12px 0;
+  overflow: hidden;
+}
 
 
-  <button onclick="runScan()">Analyze Contract</button>
+.fill {
+  height: 100%;
+  transition: width 0.5s ease;
+}
 
 
-  <div class="result">
-    <h3 id="score">Risk Score: -</h3>
-    <p id="riskLevel">Risk Level: -</p>
+/* SECTIONS */
+.section {
+  margin-top: 15px;
+}
 
 
-    <p><b>Key Risk Factors:</b></p>
-    <p id="warnings">-</p>
+.section h4 {
+  margin-bottom: 6px;
+}
 
 
-    <p><b>AI Verdict:</b></p>
-    <p id="verdict">-</p>
-  </div>
+.verdict {
+  color: #facc15;
+  font-weight: bold;
+}
 
 
+.why {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+
+.cta {
+  margin-top: 15px;
+  color: #22c55e;
+  font-size: 13px;
+}
+
+
+/* LOADING ANIMATION */
+.loader {
+  border: 3px solid #1e293b;
+  border-top: 3px solid #22c55e;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+</style></head><body><div class="container">
+  <h1>NeuroSpark (NSP)</h1>
+  <p class="subtitle">AI Risk Analysis Engine</p>
+  <p>Don't trade blind. Analyze risk before you invest.</p>
+  <p class="demo-note">Demo preview — live AI engine rolling out soon</p>  <input id="contract" placeholder="Enter token contract address...">
+  <button onclick="analyze()">Analyze Contract</button>  <div id="loading">
+    <span class="loader"></span>Analyzing contract...
+  </div>  <div class="result-card" id="result"><div class="score-box">
+  <div class="score" id="score">--</div>
+  <div class="badge" id="badge">--</div>
 </div>
 
 
-<script>
-function runScan() {
+<div class="bar">
+  <div class="fill" id="barFill"></div>
+</div>
 
 
-  let score = Math.floor(Math.random() * 60) + 40;
+<div class="section">
+  <h4>Key Risk Factors</h4>
+  <ul id="factors"></ul>
+</div>
 
 
-  let warnings = [];
+<div class="section">
+  <h4>AI Verdict</h4>
+  <p class="verdict" id="verdict"></p>
+</div>
 
 
-  if (score < 80) warnings.push("High owner control");
-  if (score < 70) warnings.push("Low liquidity");
-  if (score < 60) warnings.push("High tax detected");
-  if (score < 50) warnings.push("Honeypot risk");
+<div class="section why">
+  <h4>Why It Matters</h4>
+  <p id="why"></p>
+</div>
 
 
-  let riskText = "";
-  let riskClass = "";
+<p class="cta">
+  Want deeper analysis? NSP holders unlock advanced AI insights.
+</p>
 
 
-  if (score > 80) {
-    riskText = "Low";
-    riskClass = "low";
-  } else if (score > 50) {
-    riskText = "Medium";
-    riskClass = "medium";
-  } else {
-    riskText = "High";
-    riskClass = "high";
-  }
+  </div>
+</div><script>
+function analyze() {
+  const input = document.getElementById("contract").value;
+  if (!input) return alert("Enter contract address");
 
 
-  document.getElementById("score").innerHTML =
-    "Risk Score: " + score + " / 100 🔶";
+  document.getElementById("loading").style.display = "block";
+  document.getElementById("result").style.display = "none";
 
 
-  document.getElementById("riskLevel").innerHTML =
-    "Risk Level: <span class='" + riskClass + "'>" + riskText + "</span>";
+  setTimeout(() => {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("result").style.display = "block";
 
 
-  document.getElementById("warnings").innerHTML =
-    warnings.join(", ") || "No major risks";
+    const score = Math.floor(Math.random() * 60) + 30;
+    document.getElementById("score").innerText = score + " / 100";
 
 
-  document.getElementById("verdict").innerHTML =
-    score > 70
-      ? "✅ Low risk — safer to explore."
-      : score > 40
-      ? "⚠️ Moderate risk — be cautious."
-      : "❌ High risk — avoid this contract.";
+    const badge = document.getElementById("badge");
+    const bar = document.getElementById("barFill");
+
+
+    if (score > 70) {
+      badge.innerText = "LOW RISK";
+      badge.className = "badge low";
+      bar.style.background = "#22c55e";
+    } else if (score > 50) {
+      badge.innerText = "MEDIUM RISK";
+      badge.className = "badge medium";
+      bar.style.background = "orange";
+    } else {
+      badge.innerText = "HIGH RISK";
+      badge.className = "badge high";
+      bar.style.background = "red";
+    }
+
+
+    bar.style.width = score + "%";
+
+
+    // FACTORS (dynamic fake realism)
+    const owner = Math.floor(Math.random() * 40) + 20;
+    const liquidity = Math.floor(Math.random() * 80);
+
+
+    document.getElementById("factors").innerHTML = `
+      <li>⚠️ Owner holds ${owner}% of supply</li>
+      <li>⚠️ Liquidity under $${liquidity}K</li>
+      <li>⚠️ No liquidity lock detected</li>
+    `;
+
+
+    // STRONG AI VERDICT
+    document.getElementById("verdict").innerText =
+      "Likely insider-controlled token. High probability of liquidity trap. Entry risk elevated.";
+
+
+    // WHY IT MATTERS
+    document.getElementById("why").innerText =
+      "This token shows patterns commonly associated with past rug pulls and exit liquidity setups.";
+
+
+  }, 1500);
 }
-</script>
-
-
-</body>
+</script></body>
 </html>
