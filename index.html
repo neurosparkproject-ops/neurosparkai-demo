@@ -18,14 +18,7 @@ body {
 }
 
 
-h1 {
-  font-size: 30px;
-}
-
-
-.subtitle {
-  color: #22c55e;
-}
+.subtitle { color: #22c55e; }
 
 
 .demo-note {
@@ -59,98 +52,10 @@ button {
 #loading {
   display: none;
   margin-top: 20px;
-  font-size: 14px;
   color: #22c55e;
 }
 
 
-/* RESULT CARD */
-.result-card {
-  display: none;
-  margin-top: 25px;
-  background: #0f172a;
-  padding: 20px;
-  border-radius: 16px;
-  text-align: left;
-  box-shadow: 0 0 25px rgba(0,255,150,0.1);
-}
-
-
-/* SCORE */
-.score-box {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-
-.score {
-  font-size: 30px;
-  font-weight: bold;
-}
-
-
-.badge {
-  padding: 6px 12px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-
-/* RISK COLORS */
-.low { background: #22c55e; color: black; }
-.medium { background: orange; color: black; }
-.high { background: red; color: white; }
-
-
-/* BAR */
-.bar {
-  height: 10px;
-  background: #1e293b;
-  border-radius: 10px;
-  margin: 12px 0;
-  overflow: hidden;
-}
-
-
-.fill {
-  height: 100%;
-  transition: width 0.5s ease;
-}
-
-
-/* SECTIONS */
-.section {
-  margin-top: 15px;
-}
-
-
-.section h4 {
-  margin-bottom: 6px;
-}
-
-
-.verdict {
-  color: #facc15;
-  font-weight: bold;
-}
-
-
-.why {
-  color: #94a3b8;
-  font-size: 14px;
-}
-
-
-.cta {
-  margin-top: 15px;
-  color: #22c55e;
-  font-size: 13px;
-}
-
-
-/* LOADING ANIMATION */
 .loader {
   border: 3px solid #1e293b;
   border-top: 3px solid #22c55e;
@@ -159,20 +64,68 @@ button {
   height: 20px;
   animation: spin 1s linear infinite;
   display: inline-block;
-  margin-right: 8px;
 }
 
 
-@keyframes spin {
-  100% { transform: rotate(360deg); }
+@keyframes spin { 100% { transform: rotate(360deg);} }
+
+
+.result-card {
+  display: none;
+  margin-top: 25px;
+  background: #0f172a;
+  padding: 20px;
+  border-radius: 16px;
+  text-align: left;
 }
+
+
+.score-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.score { font-size: 30px; font-weight: bold; }
+
+
+.badge { padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: bold; }
+
+
+.low { background: #22c55e; color: black; }
+.medium { background: orange; color: black; }
+.high { background: red; color: white; }
+
+
+.bar {
+  height: 10px;
+  background: #1e293b;
+  border-radius: 10px;
+  margin: 12px 0;
+}
+
+
+.fill { height: 100%; transition: 0.5s; }
+
+
+.section { margin-top: 15px; }
+
+
+.verdict { color: #facc15; font-weight: bold; }
+
+
+.why { color: #94a3b8; font-size: 14px; }
+
+
+.cta { margin-top: 15px; color: #22c55e; font-size: 13px; }
 </style></head><body><div class="container">
   <h1>NeuroSpark (NSP)</h1>
   <p class="subtitle">AI Risk Analysis Engine</p>
   <p>Don't trade blind. Analyze risk before you invest.</p>
   <p class="demo-note">Demo preview — live AI engine rolling out soon</p>  <input id="contract" placeholder="Enter token contract address...">
   <button onclick="analyze()">Analyze Contract</button>  <div id="loading">
-    <span class="loader"></span>Analyzing contract...
+    <span class="loader"></span> Analyzing contract...
   </div>  <div class="result-card" id="result"><div class="score-box">
   <div class="score" id="score">--</div>
   <div class="badge" id="badge">--</div>
@@ -219,6 +172,8 @@ function analyze() {
 
 
   setTimeout(() => {
+
+
     document.getElementById("loading").style.display = "none";
     document.getElementById("result").style.display = "block";
 
@@ -231,44 +186,70 @@ function analyze() {
     const bar = document.getElementById("barFill");
 
 
+    let owner, liquidity, lockText, verdict, why, color;
+
+
     if (score > 70) {
       badge.innerText = "LOW RISK";
       badge.className = "badge low";
-      bar.style.background = "#22c55e";
-    } else if (score > 50) {
+      color = "#22c55e";
+
+
+      owner = Math.floor(Math.random()*15)+5;
+      liquidity = Math.floor(Math.random()*300)+200;
+      lockText = "Liquidity locked for 12+ months";
+
+
+      verdict = "Low risk profile. No major red flags detected.";
+      why = "Healthy token distribution and strong liquidity reduce manipulation risk.";
+
+
+    }
+    else if (score > 50) {
       badge.innerText = "MEDIUM RISK";
       badge.className = "badge medium";
-      bar.style.background = "orange";
-    } else {
+      color = "orange";
+
+
+      owner = Math.floor(Math.random()*25)+15;
+      liquidity = Math.floor(Math.random()*150)+50;
+      lockText = "Partial liquidity lock detected";
+
+
+      verdict = "Moderate risk detected. Some structural concerns present.";
+      why = "Certain patterns resemble early-stage setups before volatility spikes.";
+
+
+    }
+    else {
       badge.innerText = "HIGH RISK";
       badge.className = "badge high";
-      bar.style.background = "red";
+      color = "red";
+
+
+      owner = Math.floor(Math.random()*40)+30;
+      liquidity = Math.floor(Math.random()*50)+5;
+      lockText = "No liquidity lock detected";
+
+
+      verdict = "Likely insider-controlled token. High probability of liquidity trap.";
+      why = "Strong similarities with past rug pull and exit liquidity behavior.";
     }
 
 
     bar.style.width = score + "%";
-
-
-    // FACTORS (dynamic fake realism)
-    const owner = Math.floor(Math.random() * 40) + 20;
-    const liquidity = Math.floor(Math.random() * 80);
+    bar.style.background = color;
 
 
     document.getElementById("factors").innerHTML = `
       <li>⚠️ Owner holds ${owner}% of supply</li>
-      <li>⚠️ Liquidity under $${liquidity}K</li>
-      <li>⚠️ No liquidity lock detected</li>
+      <li>⚠️ Liquidity approx $${liquidity}K</li>
+      <li>⚠️ ${lockText}</li>
     `;
 
 
-    // STRONG AI VERDICT
-    document.getElementById("verdict").innerText =
-      "Likely insider-controlled token. High probability of liquidity trap. Entry risk elevated.";
-
-
-    // WHY IT MATTERS
-    document.getElementById("why").innerText =
-      "This token shows patterns commonly associated with past rug pulls and exit liquidity setups.";
+    document.getElementById("verdict").innerText = verdict;
+    document.getElementById("why").innerText = why;
 
 
   }, 1500);
