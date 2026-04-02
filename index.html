@@ -237,93 +237,121 @@ function analyze() {
   if (!input) return alert("Enter contract address");
 
 
-  document.getElementById("loading").style.display = "block";
-  document.getElementById("result").style.display = "none";
+  const loading = document.getElementById("loading");
+  const result = document.getElementById("result");
 
 
-  setTimeout(() => {
+  loading.style.display = "block";
+  result.style.display = "none";
 
 
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("result").style.display = "block";
+  const loadingTexts = [
+    "Analyzing liquidity...",
+    "Scanning holders...",
+    "Detecting patterns..."
+  ];
 
 
-    const score = Math.floor(Math.random() * 60) + 30;
-    document.getElementById("score").innerText = score + " / 100";
+  let step = 0;
 
 
-    const badge = document.getElementById("badge");
-    const bar = document.getElementById("barFill");
+  const interval = setInterval(() => {
+    loading.innerHTML = `<span class="loader"></span>${loadingTexts[step]}`;
+    step++;
 
 
-    let owner, liquidity, lockText, verdict, why, wow;
+    if (step >= loadingTexts.length) {
+      clearInterval(interval);
 
 
-    if (score > 70) {
-      badge.innerText = "LOW RISK";
-      badge.className = "badge low";
-      bar.style.background = "#22c55e";
+      setTimeout(() => {
+        loading.style.display = "none";
+        result.style.display = "block";
 
 
-      owner = Math.floor(Math.random() * 10) + 5;
-      liquidity = Math.floor(Math.random() * 200) + 150;
-
-
-      lockText = "Liquidity locked for 12+ months";
-      verdict = "Low risk profile. No major red flags detected.";
-      why = "Healthy token distribution and strong liquidity reduce manipulation risk.";
-      wow = "";
-
-
-    } else if (score > 50) {
-      badge.innerText = "MEDIUM RISK";
-      badge.className = "badge medium";
-      bar.style.background = "orange";
-
-
-      owner = Math.floor(Math.random() * 20) + 20;
-      liquidity = Math.floor(Math.random() * 150) + 50;
-
-
-      lockText = "Partial liquidity lock detected";
-      verdict = "Moderate risk detected. Some structural concerns present.";
-      why = "Patterns resemble early-stage setups before volatility spikes.";
-      wow = "⚠️ Detected pattern: early-stage liquidity trap formation";
-
-
-    } else {
-      badge.innerText = "HIGH RISK";
-      badge.className = "badge high";
-      bar.style.background = "red";
-
-
-      owner = Math.floor(Math.random() * 30) + 40;
-      liquidity = Math.floor(Math.random() * 40) + 5;
-
-
-      lockText = "No liquidity lock detected";
-      verdict = "Likely insider-controlled token. High probability of liquidity trap.";
-      why = "Strong similarities with past rug pull and exit liquidity behavior.";
-      wow = "🚨 Similar structure seen in 78% of rug pulls";
+        generateResult();
+      }, 400);
     }
 
 
-    bar.style.width = score + "%";
+  }, 500);
+}
 
 
-    document.getElementById("factors").innerHTML = `
-      <li>⚠️ Owner holds ${owner}% of supply</li>
-      <li>⚠️ Liquidity approx $${liquidity}K</li>
-      <li>⚠️ ${lockText}</li>
-    `;
+function generateResult() {
+  const score = Math.floor(Math.random() * 60) + 30;
+  document.getElementById("score").innerText = score + " / 100";
 
 
-    document.getElementById("verdict").innerText = verdict;
-    document.getElementById("why").innerText = why;
-    document.getElementById("wow").innerText = wow;
+  const badge = document.getElementById("badge");
+  const bar = document.getElementById("barFill");
 
 
-  }, 1500);
+  let owner, liquidity, lockText, verdict, why, wow;
+
+
+  if (score > 70) {
+    badge.innerText = "LOW RISK";
+    badge.className = "badge low";
+    bar.style.background = "#22c55e";
+
+
+    owner = Math.floor(Math.random() * 10) + 5;
+    liquidity = Math.floor(Math.random() * 200) + 150;
+
+
+    lockText = "Liquidity locked for 12+ months";
+    verdict = "Low risk profile. No major red flags detected.";
+    why = "Healthy token distribution and strong liquidity reduce manipulation risk.";
+    wow = "";
+
+
+  } else if (score > 50) {
+    badge.innerText = "MEDIUM RISK";
+    badge.className = "badge medium";
+    bar.style.background = "orange";
+
+
+    owner = Math.floor(Math.random() * 20) + 20;
+    liquidity = Math.floor(Math.random() * 150) + 50;
+
+
+    lockText = "Partial liquidity lock detected";
+    verdict = "Moderate risk detected. Some structural concerns present.";
+    why = "Patterns resemble early-stage setups before volatility spikes.";
+    wow = "⚠️ Detected pattern: early-stage liquidity trap formation";
+
+
+  } else {
+    badge.innerText = "HIGH RISK";
+    badge.className = "badge high";
+    bar.style.background = "red";
+
+
+    owner = Math.floor(Math.random() * 30) + 40;
+    liquidity = Math.floor(Math.random() * 40) + 5;
+
+
+    lockText = "No liquidity lock detected";
+    verdict = "Likely insider-controlled token. High probability of liquidity trap.";
+    why = "Strong similarities with past rug pull and exit liquidity behavior.";
+    wow = "🚨 Similar structure seen in 78% of rug pulls";
+  }
+
+
+  bar.style.width = score + "%";
+
+
+  document.getElementById("factors").innerHTML = `
+    <li>⚠️ Owner holds ${owner}% of supply</li>
+    <li>⚠️ Liquidity approx $${liquidity}K</li>
+    <li>⚠️ ${lockText}</li>
+  `;
+
+
+  document.getElementById("verdict").innerText = verdict;
+  document.getElementById("why").innerText = why;
+  document.getElementById("wow").innerText = wow;
 }
 </script>
 
