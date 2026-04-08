@@ -23,8 +23,6 @@ body {
 
 
 h1 { font-size: 30px; }
-
-
 .subtitle { color: #22c55e; }
 
 
@@ -72,7 +70,6 @@ button {
   padding: 20px;
   border-radius: 16px;
   text-align: left;
-  box-shadow: 0 0 25px rgba(0,255,150,0.1);
 }
 
 
@@ -84,10 +81,7 @@ button {
 }
 
 
-.score {
-  font-size: 30px;
-  font-weight: bold;
-}
+.score { font-size: 30px; font-weight: bold; }
 
 
 .badge {
@@ -103,13 +97,11 @@ button {
 .high { background: red; color: white; }
 
 
-/* BAR */
 .bar {
   height: 10px;
   background: #1e293b;
   border-radius: 10px;
   margin: 12px 0;
-  overflow: hidden;
 }
 
 
@@ -119,37 +111,43 @@ button {
 }
 
 
-/* SECTIONS */
-.section { margin-top: 15px; }
-
-
-.verdict {
-  color: #facc15;
-  font-weight: bold;
+/* MONETIZATION BOX */
+.unlock-box {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
 
-.why {
-  color: #94a3b8;
-  font-size: 14px;
-}
-
-
-.cta {
-  margin-top: 15px;
-  color: #22c55e;
-  font-size: 13px;
-}
-
-
-.wow {
+.unlock-box button {
   margin-top: 10px;
-  font-size: 13px;
-  color: #f87171;
 }
 
 
-/* LOADER */
+/* POPUP */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.popup-content {
+  background: #020617;
+  padding: 20px;
+  border-radius: 12px;
+  width: 300px;
+}
+
+
 .loader {
   border: 3px solid #1e293b;
   border-top: 3px solid #22c55e;
@@ -202,31 +200,59 @@ button {
     </div>
 
 
-    <div class="section">
+    <div>
       <h4>Key Risk Factors</h4>
       <ul id="factors"></ul>
     </div>
 
 
-    <div class="section">
+    <div>
       <h4>AI Verdict</h4>
-      <p class="verdict" id="verdict"></p>
-      <p class="wow" id="wow"></p>
+      <p id="verdict"></p>
+      <p id="wow"></p>
     </div>
 
 
-    <div class="section why">
+    <div>
       <h4>Why It Matters</h4>
       <p id="why"></p>
     </div>
 
 
-    <p class="cta">
+    <p style="font-size:12px;color:#94a3b8;">
       Used by early traders detecting hidden risks<br>
       Analyzed 12,847 tokens
     </p>
 
 
+    <!-- 🧠 PREVIEW -->
+    <p style="font-size:12px;color:#64748b;margin-top:10px;">
+      This is a preview. Full real-time analysis unlocks with NSP.
+    </p>
+
+
+    <!-- 💣 UNLOCK -->
+    <div class="unlock-box">
+      <p><b>Unlock Advanced AI Analysis</b></p>
+      <p style="font-size:12px;color:#64748b;">
+        Deep wallet tracking • Insider detection • Smart money alerts
+      </p>
+
+
+      <button onclick="openPopup()">🚀 Get Early Access</button>
+    </div>
+
+
+  </div>
+</div>
+
+
+<!-- POPUP -->
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <h3>Get Early Access</h3>
+    <input id="email" placeholder="Enter your email">
+    <button onclick="submitEmail()">Join Whitelist</button>
   </div>
 </div>
 
@@ -245,35 +271,23 @@ function analyze() {
   result.style.display = "none";
 
 
-  const loadingTexts = [
-    "Analyzing liquidity...",
-    "Scanning holders...",
-    "Detecting patterns..."
-  ];
-
-
-  let step = 0;
+  const steps = ["Analyzing liquidity...", "Scanning holders...", "Detecting patterns..."];
+  let i = 0;
 
 
   const interval = setInterval(() => {
-    loading.innerHTML = `<span class="loader"></span>${loadingTexts[step]}`;
-    step++;
+    loading.innerHTML = `<span class="loader"></span>${steps[i]}`;
+    i++;
 
 
-    if (step >= loadingTexts.length) {
+    if (i >= steps.length) {
       clearInterval(interval);
-
-
       setTimeout(() => {
         loading.style.display = "none";
         result.style.display = "block";
-
-
         generateResult();
       }, 400);
     }
-
-
   }, 500);
 }
 
@@ -287,55 +301,18 @@ function generateResult() {
   const bar = document.getElementById("barFill");
 
 
-  let owner, liquidity, lockText, verdict, why, wow;
-
-
   if (score > 70) {
     badge.innerText = "LOW RISK";
     badge.className = "badge low";
     bar.style.background = "#22c55e";
-
-
-    owner = Math.floor(Math.random() * 10) + 5;
-    liquidity = Math.floor(Math.random() * 200) + 150;
-
-
-    lockText = "Liquidity locked for 12+ months";
-    verdict = "Low risk profile. No major red flags detected.";
-    why = "Healthy token distribution and strong liquidity reduce manipulation risk.";
-    wow = "";
-
-
   } else if (score > 50) {
     badge.innerText = "MEDIUM RISK";
     badge.className = "badge medium";
     bar.style.background = "orange";
-
-
-    owner = Math.floor(Math.random() * 20) + 20;
-    liquidity = Math.floor(Math.random() * 150) + 50;
-
-
-    lockText = "Partial liquidity lock detected";
-    verdict = "Moderate risk detected. Some structural concerns present.";
-    why = "Patterns resemble early-stage setups before volatility spikes.";
-    wow = "⚠️ Detected pattern: early-stage liquidity trap formation";
-
-
   } else {
     badge.innerText = "HIGH RISK";
     badge.className = "badge high";
     bar.style.background = "red";
-
-
-    owner = Math.floor(Math.random() * 30) + 40;
-    liquidity = Math.floor(Math.random() * 40) + 5;
-
-
-    lockText = "No liquidity lock detected";
-    verdict = "Likely insider-controlled token. High probability of liquidity trap.";
-    why = "Strong similarities with past rug pull and exit liquidity behavior.";
-    wow = "🚨 Similar structure seen in 78% of rug pulls";
   }
 
 
@@ -343,15 +320,25 @@ function generateResult() {
 
 
   document.getElementById("factors").innerHTML = `
-    <li>⚠️ Owner holds ${owner}% of supply</li>
-    <li>⚠️ Liquidity approx $${liquidity}K</li>
-    <li>⚠️ ${lockText}</li>
+    <li>⚠️ Owner concentration detected</li>
+    <li>⚠️ Liquidity risk patterns</li>
+    <li>⚠️ Contract behavior signals</li>
   `;
+}
 
 
-  document.getElementById("verdict").innerText = verdict;
-  document.getElementById("why").innerText = why;
-  document.getElementById("wow").innerText = wow;
+function openPopup() {
+  document.getElementById("popup").style.display = "flex";
+}
+
+
+function submitEmail() {
+  const email = document.getElementById("email").value;
+  if (!email) return alert("Enter email");
+
+
+  alert("You're on the whitelist 🚀");
+  document.getElementById("popup").style.display = "none";
 }
 </script>
 
