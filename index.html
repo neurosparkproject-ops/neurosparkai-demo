@@ -311,18 +311,18 @@ function generateResult() {
 
 
   if (score > 70) {
-    badge.innerText = "LOW RISK";
-    badge.className = "badge low";
-    bar.style.background = "#22c55e";
-  } else if (score > 50) {
-    badge.innerText = "MEDIUM RISK";
-    badge.className = "badge medium";
-    bar.style.background = "orange";
-  } else {
-    badge.innerText = "HIGH RISK";
-    badge.className = "badge high";
-    bar.style.background = "red";
-  }
+  badge.innerText = "LOW RISK ✅";
+  badge.className = "badge low";
+  bar.style.background = "#22c55e";
+} else if (score > 50) {
+  badge.innerText = "MEDIUM RISK ⚠️";
+  badge.className = "badge medium";
+  bar.style.background = "orange";
+} else {
+  badge.innerText = "HIGH RISK ❌";
+  badge.className = "badge high";
+  bar.style.background = "red";
+}
 
 
   bar.style.width = score + "%";
